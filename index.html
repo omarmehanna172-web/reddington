@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Reddington">
+<meta name="theme-color" content="#0a0a0a">
+<title>The Reddington Protocol</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:#0a0a0a;color:#e0e0e0;font-family:'Courier New',monospace;min-height:100vh;min-height:100dvh;overscroll-behavior:none;color-scheme:dark}
+body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.page{padding:24px 16px 40px;display:none;background:#0a0a0a;min-height:100vh;min-height:100dvh}
+.page.active{display:block}
+.splash{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;text-align:center;background:#0a0a0a}
+.splash.hidden{display:none}
+.gold{color:#c5a455}
+.dim{color:#555}
+.dimmer{color:#444}
+.white{color:#fff}
+
+.header{text-align:center;margin-bottom:36px}
+.rank-card{background:#111;border:1px solid #1a1a1a;border-radius:6px;padding:20px;margin-bottom:32px;text-align:center}
+.bar-track{height:6px;background:#1a1a1a;border-radius:3px;overflow:hidden}
+.bar-track.thin{height:4px}
+.bar-track.thinner{height:3px}
+.bar-fill{height:100%;background:linear-gradient(90deg,#8b6914,#c5a455,#d4b96a);border-radius:3px;transition:width .5s ease}
+
+.mission-card{display:flex;align-items:center;gap:16px;padding:16px;background:#111;border:1px solid #1a1a1a;border-radius:6px;cursor:pointer;margin-bottom:10px;transition:border-color .3s;-webkit-user-select:none;user-select:none}
+.mission-card:active{border-color:#c5a455}
+.mission-card.done{background:rgba(197,164,85,.06);border-color:rgba(197,164,85,.25)}
+
+.task{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#111;border:1px solid #1a1a1a;border-radius:4px;cursor:pointer;margin-bottom:8px;transition:all .3s;-webkit-user-select:none;user-select:none}
+.task.done{background:rgba(197,164,85,.06);border-color:rgba(197,164,85,.2)}
+.checkbox{width:22px;height:22px;border-radius:3px;border:2px solid #333;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .3s}
+.task.done .checkbox{border-color:#c5a455;background:rgba(197,164,85,.15)}
+.task-text{flex:1;font-size:13px;color:#ccc;line-height:1.6;font-family:'Courier New',monospace}
+.task.done .task-text{color:#888;text-decoration:line-through;text-decoration-color:rgba(197,164,85,.3)}
+.task-xp{font-size:11px;color:#444;letter-spacing:1px;flex-shrink:0;margin-top:2px;font-family:'Courier New',monospace}
+.task.done .task-xp{color:#c5a455;font-weight:700}
+
+.back-btn{display:inline-block;border:1px solid #333;color:#888;padding:8px 16px;cursor:pointer;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;font-family:'Courier New',monospace}
+.back-btn:active{border-color:#c5a455;color:#c5a455}
+
+.reset-btn{display:inline-block;border:1px solid #222;color:#444;padding:8px 20px;cursor:pointer;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:'Courier New',monospace}
+
+.toast{position:fixed;top:12px;right:16px;z-index:999;font-size:10px;letter-spacing:2px;font-family:'Courier New',monospace;padding:6px 14px;border-radius:4px;background:#111;transition:opacity .3s;opacity:0;pointer-events:none}
+.toast.show{opacity:1}
+.toast.ok{color:#c5a455;border:1px solid #c5a455}
+.toast.fail{color:#c44;border:1px solid #c44}
+
+.ls{font-size:10px;letter-spacing:4px;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- SPLASH -->
+<div class="splash" id="splash">
+  <div>
+    <div style="font-size:48px;margin-bottom:16px">🎩</div>
+    <div style="font-size:14px;letter-spacing:8px;text-transform:uppercase" class="gold">THE REDDINGTON</div>
+    <div style="font-size:11px;letter-spacing:4px;margin-top:8px;text-transform:uppercase" class="dim">PROTOCOL</div>
+    <div style="margin-top:32px;width:120px;height:1px;background:linear-gradient(90deg,transparent,#c5a455,transparent);margin-left:auto;margin-right:auto"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page" id="dashboard">
+  <div class="header">
+    <div style="font-size:36px;margin-bottom:12px">🎩</div>
+    <div class="ls gold" style="letter-spacing:6px">THE REDDINGTON</div>
+    <div class="ls dim" style="letter-spacing:3px;margin-top:4px">PROTOCOL</div>
+  </div>
+  <div class="rank-card">
+    <div class="ls dim" style="margin-bottom:6px">CURRENT RANK</div>
+    <div id="rank-name" class="gold" style="font-size:20px;letter-spacing:4px;font-weight:700;margin-bottom:4px">CIVILIAN</div>
+    <div style="font-size:24px;font-weight:700;margin-bottom:16px">
+      <span id="total-xp" class="white">0</span>
+      <span style="font-size:12px;font-weight:400" class="dim"> / <span id="max-xp">0</span> XP</span>
+    </div>
+    <div class="bar-track" style="margin-bottom:8px"><div class="bar-fill" id="rank-bar" style="width:0%"></div></div>
+    <div id="rank-next" class="ls dim" style="font-size:10px"></div>
+  </div>
+  <div class="ls dim" style="margin-bottom:16px">MISSIONS</div>
+  <div id="mission-list"></div>
+  <div style="text-align:center;margin-top:40px">
+    <div class="reset-btn" onclick="resetAll()">RESET PROGRESS</div>
+  </div>
+</div>
+
+<!-- MISSION VIEW -->
+<div class="page" id="mission-view">
+  <div class="back-btn" onclick="showDashboard()">← BACK</div>
+  <div style="margin-bottom:32px">
+    <div id="mv-icon" style="font-size:32px;margin-bottom:8px"></div>
+    <div class="ls gold" style="font-size:13px;letter-spacing:6px;margin-bottom:4px">MISSION</div>
+    <div id="mv-title" class="white" style="font-size:28px;letter-spacing:4px;margin:4px 0 8px"></div>
+    <div id="mv-subtitle" class="dim" style="font-size:12px;letter-spacing:2px;margin-bottom:16px"></div>
+    <div id="mv-desc" style="font-size:13px;color:#666;line-height:1.7;max-width:500px;margin-bottom:20px"></div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px">
+      <div class="bar-track thin" style="flex:1"><div class="bar-fill" id="mv-bar" style="width:0%"></div></div>
+      <span id="mv-count" class="gold" style="font-size:11px;letter-spacing:1px"></span>
+    </div>
+    <div id="mv-xp" class="dim" style="font-size:11px"></div>
+  </div>
+  <div id="task-list"></div>
+</div>
+
+<script>
+var MISSIONS = [
+  {
+    id:"composure",title:"COMPOSURE",subtitle:"Control the Storm Within",icon:"🧊",
+    description:"Reddington never flinches. Train your nervous system to stay calm under any pressure.",
+    tasks:[
+      {id:"c1",text:"Set a consistent wake-up time and stick to it for 7 days",xp:50},
+      {id:"c2",text:"Take a cold shower (30+ seconds cold at the end)",xp:30},
+      {id:"c3",text:"Sit in complete silence for 10 minutes — no phone, no music",xp:40},
+      {id:"c4",text:"Cold shower streak: 7 days in a row",xp:80},
+      {id:"c5",text:"Silence streak: 7 days of 10-minute sessions",xp:80},
+      {id:"c6",text:"Stay calm in a stressful moment — consciously slow your breathing",xp:60},
+      {id:"c7",text:"Go an entire day without complaining about anything",xp:50},
+      {id:"c8",text:"Cold shower streak: 21 days",xp:120},
+      {id:"c9",text:"Silence streak: 21 days",xp:120},
+      {id:"c10",text:"Handle a conflict or disagreement without raising your voice",xp:100}
+    ]
+  },
+  {
+    id:"speech",title:"SPEECH",subtitle:"Words Are Weapons",icon:"🎙️",
+    description:"Red speaks like every word costs money. Slow, deliberate, no filler. Make people lean in.",
+    tasks:[
+      {id:"s1",text:"Record yourself speaking for 2 minutes and listen back",xp:30},
+      {id:"s2",text:"Identify your top 3 filler words (like, um, basically, so)",xp:20},
+      {id:"s3",text:"Have a 5-minute conversation with zero filler words",xp:50},
+      {id:"s4",text:"Practice a 3-second pause before answering a question — 5 times",xp:40},
+      {id:"s5",text:"Record + review sessions: 7 days",xp:80},
+      {id:"s6",text:"Deliver a strong opinion in a conversation without backtracking",xp:60},
+      {id:"s7",text:"Tell a short story to someone and make them fully engaged",xp:70},
+      {id:"s8",text:"Have a 10-minute conversation at half your normal speaking speed",xp:60},
+      {id:"s9",text:"Use silence to make a point — pause after saying something important",xp:50},
+      {id:"s10",text:"Someone comments that you speak well or confidently",xp:150}
+    ]
+  },
+  {
+    id:"knowledge",title:"KNOWLEDGE",subtitle:"Know Everything About Everything",icon:"📚",
+    description:"Reddington quotes poets, knows history, understands people. Build range that makes you unpredictable.",
+    tasks:[
+      {id:"k1",text:"Start reading The Laws of Human Nature (Robert Greene)",xp:30},
+      {id:"k2",text:"Read for 20 minutes — 7 day streak",xp:80},
+      {id:"k3",text:"Watch a documentary about a topic you know nothing about",xp:30},
+      {id:"k4",text:"Pick your 3 depth topics beyond tech/business",xp:40},
+      {id:"k5",text:"Learn 5 interesting facts about one of your depth topics",xp:30},
+      {id:"k6",text:"Finish your first book from the roadmap",xp:100},
+      {id:"k7",text:"Bring up a non-obvious topic in conversation and hold it for 2+ minutes",xp:70},
+      {id:"k8",text:"Read for 20 minutes — 21 day streak",xp:120},
+      {id:"k9",text:"Finish your second book",xp:100},
+      {id:"k10",text:"Someone says 'how do you know that?' in a conversation",xp:150}
+    ]
+  },
+  {
+    id:"social",title:"SOCIAL INTEL",subtitle:"Read the Room Before You Enter It",icon:"👁️",
+    description:"Red knows what people want before they say it. Develop the ability to read anyone.",
+    tasks:[
+      {id:"so1",text:"People-watch for 15 minutes — note who leads, who follows",xp:30},
+      {id:"so2",text:"In a conversation, listen 80% and talk 20%",xp:40},
+      {id:"so3",text:"Ask a follow-up question instead of sharing your own story",xp:30},
+      {id:"so4",text:"Hold comfortable eye contact for a full sentence without looking away",xp:40},
+      {id:"so5",text:"Correctly guess someone's mood before they tell you",xp:50},
+      {id:"so6",text:"Notice a lie or exaggeration in real-time (don't call it out, just note it)",xp:60},
+      {id:"so7",text:"Make someone feel genuinely heard — they open up to you",xp:70},
+      {id:"so8",text:"Observe 5 social situations and journal what you noticed",xp:80},
+      {id:"so9",text:"Predict how a social interaction will play out — and be right",xp:80},
+      {id:"so10",text:"Someone tells you 'you really get people'",xp:150}
+    ]
+  },
+  {
+    id:"presence",title:"PRESENCE",subtitle:"Own the Room Without Speaking",icon:"🖤",
+    description:"Style, posture, movement. Reddington commands attention just by walking in.",
+    tasks:[
+      {id:"p1",text:"Audit your wardrobe — identify 3 outfits that look intentional",xp:30},
+      {id:"p2",text:"Practice posture: shoulders back, chin level, for one full day",xp:40},
+      {id:"p3",text:"Walk deliberately for a full day — no rushing, no shuffling",xp:40},
+      {id:"p4",text:"Sit without fidgeting for a 30-minute meeting or class",xp:50},
+      {id:"p5",text:"Buy or organize one well-fitting outfit in neutral colors",xp:50},
+      {id:"p6",text:"Develop one personal signature (greeting, phrase, accessory, ritual)",xp:60},
+      {id:"p7",text:"Enter a room and consciously choose where to sit and how to carry yourself",xp:40},
+      {id:"p8",text:"Get a compliment on your appearance or style",xp:70},
+      {id:"p9",text:"Maintain deliberate posture + movement for 7 consecutive days",xp:100},
+      {id:"p10",text:"Someone tells you that you have presence or carry yourself well",xp:150}
+    ]
+  },
+  {
+    id:"body",title:"THE TEMPLE",subtitle:"Build the Machine That Carries You",icon:"⚔️",
+    description:"Reddington is always clean, sharp, and carries himself like his body matters. Hygiene, fitness, grooming — the foundation under everything.",
+    tasks:[
+      {id:"b1",text:"Lock in a daily skincare routine — cleanser + moisturizer + sunscreen",xp:40},
+      {id:"b2",text:"Skincare routine streak: 7 days without missing",xp:80},
+      {id:"b3",text:"Start a gym routine — go 3 times in one week",xp:60},
+      {id:"b4",text:"Hit the gym 3x/week for 3 consecutive weeks",xp:120},
+      {id:"b5",text:"Nail your hygiene stack: shower, deodorant, cologne, trimmed nails — daily",xp:40},
+      {id:"b6",text:"Find a cologne/scent that becomes YOUR signature",xp:50},
+      {id:"b7",text:"Get a sharp haircut that fits your face shape",xp:40},
+      {id:"b8",text:"Track your water intake — hit 2+ liters for 7 days",xp:60},
+      {id:"b9",text:"Fix your sleep — 7+ hours for 7 consecutive nights",xp:80},
+      {id:"b10",text:"Someone compliments how you look or smell",xp:100},
+      {id:"b11",text:"Gym streak: 4 weeks of 3x/week consistently",xp:150},
+      {id:"b12",text:"Notice a visible physical change — posture, arms, face, energy",xp:150}
+    ]
+  },
+  {
+    id:"experience",title:"EXPERIENCE",subtitle:"A Man Who Has Lived",icon:"🌍",
+    description:"Red's stories come from a life fully lived. Break your routine. Try things that scare you.",
+    tasks:[
+      {id:"e1",text:"Try a cuisine you've never eaten before",xp:30},
+      {id:"e2",text:"Visit a place in your city you've never been to",xp:30},
+      {id:"e3",text:"Watch a highly rated film from a country you know nothing about",xp:30},
+      {id:"e4",text:"Cook a complete meal from scratch — something challenging",xp:50},
+      {id:"e5",text:"Start a conversation with a stranger",xp:60},
+      {id:"e6",text:"Do something that genuinely scares or challenges you",xp:80},
+      {id:"e7",text:"Visit a museum, gallery, or cultural site",xp:50},
+      {id:"e8",text:"Attend an event alone and enjoy it",xp:70},
+      {id:"e9",text:"Complete 5 new experiences in a single week",xp:100},
+      {id:"e10",text:"Tell a story from a real experience that captivates someone",xp:150}
+    ]
+  }
+];
+
+var LEVELS = [
+  {name:"CIVILIAN",min:0},
+  {name:"PERSON OF INTEREST",min:200},
+  {name:"ASSET",min:500},
+  {name:"OPERATIVE",min:900},
+  {name:"SPECIALIST",min:1400},
+  {name:"HANDLER",min:2000},
+  {name:"CONCIERGE OF CRIME",min:2800},
+  {name:"BLACKLISTER",min:3800},
+  {name:"REDDINGTON",min:4800}
+];
+
+var KEY = "reddington-v5";
+var completed = {};
+var currentMission = -1;
+
+function load() {
+  try {
+    var raw = localStorage.getItem(KEY);
+    if (raw) {
+      var p = JSON.parse(raw);
+      if (p && typeof p === "object") completed = p;
+    }
+  } catch(e) {}
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(completed));
+    showToast(true);
+  } catch(e) {
+    showToast(false);
+  }
+}
+
+function showToast(ok) {
+  var el = document.getElementById("toast");
+  el.textContent = ok ? "SAVED ✓" : "SAVE FAILED ✗";
+  el.className = "toast show " + (ok ? "ok" : "fail");
+  setTimeout(function() { el.className = "toast"; }, 1500);
+}
+
+function getLevel(xp) {
+  var lvl = LEVELS[0];
+  for (var i = LEVELS.length - 1; i >= 0; i--) {
+    if (xp >= LEVELS[i].min) { lvl = LEVELS[i]; break; }
+  }
+  var idx = LEVELS.indexOf(lvl);
+  var next = LEVELS[idx + 1] || null;
+  var progress = next ? (xp - lvl.min) / (next.min - lvl.min) : 1;
+  return { name: lvl.name, index: idx, next: next, progress: progress };
+}
+
+function getTotalXP() {
+  var sum = 0;
+  for (var i = 0; i < MISSIONS.length; i++) {
+    for (var j = 0; j < MISSIONS[i].tasks.length; j++) {
+      if (completed[MISSIONS[i].tasks[j].id]) sum += MISSIONS[i].tasks[j].xp;
+    }
+  }
+  return sum;
+}
+
+function getMaxXP() {
+  var sum = 0;
+  for (var i = 0; i < MISSIONS.length; i++) {
+    for (var j = 0; j < MISSIONS[i].tasks.length; j++) {
+      sum += MISSIONS[i].tasks[j].xp;
+    }
+  }
+  return sum;
+}
+
+function renderDashboard() {
+  var totalXP = getTotalXP();
+  var maxXP = getMaxXP();
+  var level = getLevel(totalXP);
+
+  document.getElementById("rank-name").textContent = level.name;
+  document.getElementById("total-xp").textContent = totalXP;
+  document.getElementById("max-xp").textContent = maxXP;
+  document.getElementById("rank-bar").style.width = (level.progress * 100).toFixed(1) + "%";
+
+  var nextEl = document.getElementById("rank-next");
+  if (level.next) {
+    nextEl.textContent = "NEXT: " + level.next.name + " — " + (level.next.min - totalXP) + " XP TO GO";
+  } else {
+    nextEl.textContent = "MAX RANK ACHIEVED";
+    nextEl.style.color = "#c5a455";
+  }
+
+  var list = document.getElementById("mission-list");
+  list.innerHTML = "";
+
+  for (var i = 0; i < MISSIONS.length; i++) {
+    (function(idx) {
+      var m = MISSIONS[idx];
+      var mXP = 0, mMax = 0, done = 0;
+      for (var j = 0; j < m.tasks.length; j++) {
+        mMax += m.tasks[j].xp;
+        if (completed[m.tasks[j].id]) { mXP += m.tasks[j].xp; done++; }
+      }
+      var allDone = done === m.tasks.length;
+      var pct = mMax > 0 ? ((mXP / mMax) * 100).toFixed(1) : "0";
+
+      var card = document.createElement("div");
+      card.className = "mission-card" + (allDone ? " done" : "");
+      card.onclick = function() { openMission(idx); };
+      card.innerHTML =
+        '<div style="font-size:28px;flex-shrink:0">' + m.icon + '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:13px;letter-spacing:3px;font-weight:700;margin-bottom:2px;color:' + (allDone ? '#c5a455' : '#ccc') + '">' + m.title + '</div>' +
+          '<div style="font-size:11px;color:#555;letter-spacing:1px;margin-bottom:8px">' + m.subtitle + '</div>' +
+          '<div class="bar-track thinner"><div class="bar-fill" style="width:' + pct + '%;' + (allDone ? 'background:#c5a455' : '') + '"></div></div>' +
+        '</div>' +
+        '<div style="text-align:right;flex-shrink:0">' +
+          '<div style="font-size:13px;color:#c5a455;font-weight:700">' + done + '/' + m.tasks.length + '</div>' +
+          '<div style="font-size:10px;color:#444;margin-top:2px">' + mXP + ' XP</div>' +
+        '</div>';
+      list.appendChild(card);
+    })(i);
+  }
+}
+
+function openMission(idx) {
+  currentMission = idx;
+  var m = MISSIONS[idx];
+
+  document.getElementById("mv-icon").textContent = m.icon;
+  document.getElementById("mv-title").textContent = m.title;
+  document.getElementById("mv-subtitle").textContent = m.subtitle;
+  document.getElementById("mv-desc").textContent = m.description;
+
+  renderTasks();
+
+  document.getElementById("dashboard").className = "page";
+  document.getElementById("mission-view").className = "page active";
+  window.scrollTo(0, 0);
+}
+
+function renderTasks() {
+  var m = MISSIONS[currentMission];
+  var mXP = 0, mMax = 0, done = 0;
+  for (var j = 0; j < m.tasks.length; j++) {
+    mMax += m.tasks[j].xp;
+    if (completed[m.tasks[j].id]) { mXP += m.tasks[j].xp; done++; }
+  }
+  var pct = mMax > 0 ? ((mXP / mMax) * 100).toFixed(1) : "0";
+
+  document.getElementById("mv-bar").style.width = pct + "%";
+  document.getElementById("mv-count").textContent = done + "/" + m.tasks.length;
+  document.getElementById("mv-xp").textContent = mXP + " / " + mMax + " XP";
+
+  var list = document.getElementById("task-list");
+  list.innerHTML = "";
+
+  for (var j = 0; j < m.tasks.length; j++) {
+    (function(task) {
+      var isDone = !!completed[task.id];
+      var el = document.createElement("div");
+      el.className = "task" + (isDone ? " done" : "");
+      el.onclick = function() {
+        if (completed[task.id]) {
+          delete completed[task.id];
+        } else {
+          completed[task.id] = true;
+        }
+        save();
+        renderTasks();
+      };
+      el.innerHTML =
+        '<div class="checkbox">' + (isDone ? '<span style="color:#c5a455;font-size:14px">✓</span>' : '') + '</div>' +
+        '<div class="task-text">' + task.text + '</div>' +
+        '<div class="task-xp">+' + task.xp + '</div>';
+      list.appendChild(el);
+    })(m.tasks[j]);
+  }
+}
+
+function showDashboard() {
+  currentMission = -1;
+  renderDashboard();
+  document.getElementById("mission-view").className = "page";
+  document.getElementById("dashboard").className = "page active";
+  window.scrollTo(0, 0);
+}
+
+function resetAll() {
+  if (confirm("Reset all progress? This cannot be undone.")) {
+    completed = {};
+    try { localStorage.removeItem(KEY); } catch(e) {}
+    if (currentMission >= 0) {
+      renderTasks();
+    } else {
+      renderDashboard();
+    }
+  }
+}
+
+// INIT
+load();
+setTimeout(function() {
+  document.getElementById("splash").className = "splash hidden";
+  document.getElementById("dashboard").className = "page active";
+  renderDashboard();
+}, 2200);
+</script>
+</body>
+</html>
