@@ -7,223 +7,244 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Reddington">
 <meta name="theme-color" content="#0a0a0a">
-<title>The Reddington Protocol</title>
+<title>The Reddington Execution Engine</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{background:#0a0a0a;color:#e0e0e0;font-family:'Courier New',monospace;min-height:100vh;min-height:100dvh;overscroll-behavior:none;color-scheme:dark}
 body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-.page{padding:24px 16px 40px;display:none;background:#0a0a0a;min-height:100vh;min-height:100dvh}
+button,input,textarea{font-family:'Courier New',monospace}
+.page{padding:24px 16px 90px;display:none;background:#0a0a0a;min-height:100vh;min-height:100dvh;max-width:760px;margin:0 auto}
 .page.active{display:block}
 .splash{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;text-align:center;background:#0a0a0a}
 .splash.hidden{display:none}
-.gold{color:#c5a455}
-.dim{color:#555}
-.dimmer{color:#444}
-.white{color:#fff}
-
-.header{text-align:center;margin-bottom:36px}
-.rank-card{background:#111;border:1px solid #1a1a1a;border-radius:6px;padding:20px;margin-bottom:32px;text-align:center}
-.bar-track{height:6px;background:#1a1a1a;border-radius:3px;overflow:hidden}
-.bar-track.thin{height:4px}
-.bar-track.thinner{height:3px}
-.bar-fill{height:100%;background:linear-gradient(90deg,#8b6914,#c5a455,#d4b96a);border-radius:3px;transition:width .5s ease}
-
-.mission-card{display:flex;align-items:center;gap:16px;padding:16px;background:#111;border:1px solid #1a1a1a;border-radius:6px;cursor:pointer;margin-bottom:10px;transition:border-color .3s;-webkit-user-select:none;user-select:none}
-.mission-card:active{border-color:#c5a455}
-.mission-card.done{background:rgba(197,164,85,.06);border-color:rgba(197,164,85,.25)}
-
-.task{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#111;border:1px solid #1a1a1a;border-radius:4px;cursor:pointer;margin-bottom:8px;transition:all .3s;-webkit-user-select:none;user-select:none}
-.task.done{background:rgba(197,164,85,.06);border-color:rgba(197,164,85,.2)}
-.checkbox{width:22px;height:22px;border-radius:3px;border:2px solid #333;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .3s}
-.task.done .checkbox{border-color:#c5a455;background:rgba(197,164,85,.15)}
-.task-text{flex:1;font-size:13px;color:#ccc;line-height:1.6;font-family:'Courier New',monospace}
-.task.done .task-text{color:#888;text-decoration:line-through;text-decoration-color:rgba(197,164,85,.3)}
-.task-xp{font-size:11px;color:#444;letter-spacing:1px;flex-shrink:0;margin-top:2px;font-family:'Courier New',monospace}
-.task.done .task-xp{color:#c5a455;font-weight:700}
-
-.back-btn{display:inline-block;border:1px solid #333;color:#888;padding:8px 16px;cursor:pointer;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;font-family:'Courier New',monospace}
-.back-btn:active{border-color:#c5a455;color:#c5a455}
-
-.reset-btn{display:inline-block;border:1px solid #222;color:#444;padding:8px 20px;cursor:pointer;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:'Courier New',monospace}
-
-.toast{position:fixed;top:12px;right:16px;z-index:999;font-size:10px;letter-spacing:2px;font-family:'Courier New',monospace;padding:6px 14px;border-radius:4px;background:#111;transition:opacity .3s;opacity:0;pointer-events:none}
-.toast.show{opacity:1}
-.toast.ok{color:#c5a455;border:1px solid #c5a455}
-.toast.fail{color:#c44;border:1px solid #c44}
-
-.ls{font-size:10px;letter-spacing:4px;text-transform:uppercase}
+.gold{color:#c5a455}.dim{color:#666}.dimmer{color:#444}.white{color:#fff}.bad{color:#b94a48}.ok{color:#86a873}
+.ls{font-size:10px;letter-spacing:3px;text-transform:uppercase}.small{font-size:12px;line-height:1.65}.tiny{font-size:10px;line-height:1.55}.mt{margin-top:16px}.mb{margin-bottom:16px}
+.header{text-align:center;margin-bottom:24px}.hat{font-size:34px;margin-bottom:10px}
+.card{background:#111;border:1px solid #1d1d1d;border-radius:8px;padding:16px;margin-bottom:12px}.card.gold-border{border-color:rgba(197,164,85,.35);background:rgba(197,164,85,.045)}
+.rank-card{text-align:center;padding:18px}.bar-track{height:6px;background:#1d1d1d;border-radius:3px;overflow:hidden}.bar-track.thin{height:4px}.bar-fill{height:100%;background:linear-gradient(90deg,#8b6914,#c5a455,#d4b96a);border-radius:3px;transition:width .5s ease}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{text-align:center;background:#0d0d0d;border:1px solid #1c1c1c;border-radius:6px;padding:12px}.stat .num{font-size:18px;color:#fff;font-weight:700;margin-top:4px}
+.btn{width:100%;border:1px solid #333;background:#101010;color:#cfcfcf;padding:14px 14px;border-radius:6px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-bottom:10px}.btn:active{border-color:#c5a455;color:#c5a455}.btn.primary{border-color:#8b6914;background:rgba(197,164,85,.08);color:#c5a455}.btn.locked{opacity:.35;cursor:not-allowed}.btn.danger{color:#b94a48;border-color:#3a1c1c;background:#110c0c}
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.96);border-top:1px solid #1d1d1d;padding:10px 10px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:50}.nav button{flex:1;background:#111;border:1px solid #222;border-radius:6px;color:#777;padding:10px 6px;font-size:10px;letter-spacing:1px;text-transform:uppercase}.nav button.active{color:#c5a455;border-color:#8b6914;background:rgba(197,164,85,.06)}
+.day-card{display:flex;align-items:center;gap:13px;background:#111;border:1px solid #1d1d1d;border-radius:7px;padding:14px;margin-bottom:9px;cursor:pointer}.day-card.done{border-color:rgba(197,164,85,.35);background:rgba(197,164,85,.06)}.day-card.locked{opacity:.38;cursor:not-allowed}.day-num{width:34px;height:34px;border-radius:50%;background:#0b0b0b;border:1px solid #2a2a2a;display:flex;align-items:center;justify-content:center;font-size:12px;color:#c5a455;flex-shrink:0}.day-card.done .day-num{background:rgba(197,164,85,.14);border-color:#8b6914}.day-body{flex:1}.pill{display:inline-block;border:1px solid #2d2d2d;border-radius:999px;padding:5px 9px;font-size:10px;color:#777;margin:3px 4px 3px 0}.pill.gold-pill{color:#c5a455;border-color:#8b6914;background:rgba(197,164,85,.05)}
+.task{display:flex;align-items:flex-start;gap:12px;background:#111;border:1px solid #1d1d1d;border-radius:6px;padding:13px;margin-bottom:8px;cursor:pointer}.task.done{border-color:rgba(197,164,85,.25);background:rgba(197,164,85,.05)}.checkbox{width:22px;height:22px;border-radius:4px;border:2px solid #333;display:flex;align-items:center;justify-content:center;flex-shrink:0}.task.done .checkbox{border-color:#c5a455;background:rgba(197,164,85,.15)}.task-text{font-size:12px;line-height:1.6;color:#ccc}.task.done .task-text{color:#777;text-decoration:line-through;text-decoration-color:rgba(197,164,85,.3)}
+.label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#c5a455;margin:16px 0 7px}.input{width:100%;min-height:76px;background:#0d0d0d;border:1px solid #252525;border-radius:6px;color:#e0e0e0;padding:12px;font-size:13px;line-height:1.55;resize:vertical}.input:focus{outline:none;border-color:#8b6914}.input.short{min-height:44px}.back{display:inline-block;border:1px solid #333;color:#888;padding:8px 14px;cursor:pointer;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;border-radius:4px}.back:active{border-color:#c5a455;color:#c5a455}
+.toast{position:fixed;top:12px;right:16px;z-index:999;font-size:10px;letter-spacing:2px;padding:7px 14px;border-radius:4px;background:#111;transition:opacity .3s;opacity:0;pointer-events:none}.toast.show{opacity:1}.toast.good{color:#c5a455;border:1px solid #c5a455}.toast.fail{color:#c44;border:1px solid #c44}
+.empty{text-align:center;color:#555;padding:24px 10px;border:1px dashed #222;border-radius:8px;background:#0d0d0d}.quote{font-style:italic;color:#999;font-size:13px;line-height:1.65;border-left:2px solid #8b6914;padding-left:12px}.warning{font-size:11px;color:#8b6b6b;line-height:1.6;background:#120d0d;border:1px solid #2a1616;border-radius:6px;padding:10px;margin-bottom:12px}
 </style>
 </head>
 <body>
-
 <div class="toast" id="toast"></div>
 
-<!-- SPLASH -->
 <div class="splash" id="splash">
   <div>
     <div style="font-size:48px;margin-bottom:16px">🎩</div>
-    <div style="font-size:14px;letter-spacing:8px;text-transform:uppercase" class="gold">THE REDDINGTON</div>
-    <div style="font-size:11px;letter-spacing:4px;margin-top:8px;text-transform:uppercase" class="dim">PROTOCOL</div>
+    <div style="font-size:14px;letter-spacing:8px;text-transform:uppercase" class="gold">REDDINGTON</div>
+    <div style="font-size:11px;letter-spacing:4px;margin-top:8px;text-transform:uppercase" class="dim">EXECUTION ENGINE</div>
     <div style="margin-top:32px;width:120px;height:1px;background:linear-gradient(90deg,transparent,#c5a455,transparent);margin-left:auto;margin-right:auto"></div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
-<div class="page" id="dashboard">
+<!-- HOME -->
+<div class="page" id="home">
   <div class="header">
-    <div style="font-size:36px;margin-bottom:12px">🎩</div>
-    <div class="ls gold" style="letter-spacing:6px">THE REDDINGTON</div>
-    <div class="ls dim" style="letter-spacing:3px;margin-top:4px">PROTOCOL</div>
+    <div class="hat">🎩</div>
+    <div class="ls gold" style="letter-spacing:6px">REDDINGTON</div>
+    <div class="ls dim" style="letter-spacing:3px;margin-top:4px">EXECUTION ENGINE</div>
   </div>
-  <div class="rank-card">
+
+  <div class="card rank-card">
     <div class="ls dim" style="margin-bottom:6px">CURRENT RANK</div>
     <div id="rank-name" class="gold" style="font-size:20px;letter-spacing:4px;font-weight:700;margin-bottom:4px">CIVILIAN</div>
-    <div style="font-size:24px;font-weight:700;margin-bottom:16px">
+    <div style="font-size:24px;font-weight:700;margin-bottom:14px">
       <span id="total-xp" class="white">0</span>
-      <span style="font-size:12px;font-weight:400" class="dim"> / <span id="max-xp">0</span> XP</span>
+      <span style="font-size:12px;font-weight:400" class="dim"> XP</span>
     </div>
     <div class="bar-track" style="margin-bottom:8px"><div class="bar-fill" id="rank-bar" style="width:0%"></div></div>
-    <div id="rank-next" class="ls dim" style="font-size:10px"></div>
+    <div id="rank-next" class="ls dim"></div>
   </div>
-  <div class="ls dim" style="margin-bottom:16px">MISSIONS</div>
-  <div id="mission-list"></div>
-  <div style="text-align:center;margin-top:40px">
-    <div class="reset-btn" onclick="resetAll()">RESET PROGRESS</div>
+
+  <div class="grid mb">
+    <div class="stat"><div class="ls dim">STREAK</div><div class="num" id="streak-num">0</div></div>
+    <div class="stat"><div class="ls dim">UNLOCKED</div><div class="num" id="unlocked-num">1/7</div></div>
+  </div>
+
+  <div class="card gold-border">
+    <div class="ls dim">CURRENT WEEK</div>
+    <div id="home-week-title" class="gold" style="font-size:22px;font-weight:700;letter-spacing:2px;margin:8px 0 4px"></div>
+    <div id="home-week-sub" class="small dim"></div>
+    <div class="mt">
+      <span class="pill gold-pill" id="home-domain"></span>
+      <span class="pill" id="home-skill"></span>
+      <span class="pill" id="home-book"></span>
+    </div>
+  </div>
+
+  <button class="btn primary" onclick="openToday()">OPEN TODAY'S MISSION</button>
+  <button class="btn" onclick="showPage('week')">VIEW WEEK BRIEFING</button>
+  <button class="btn" onclick="showPage('stories')">STORIES FILE</button>
+
+  <div class="card mt">
+    <div class="ls gold" style="margin-bottom:8px">RULE</div>
+    <div class="quote">No new system. No redesign. Finish the day. Unlock the next one.</div>
   </div>
 </div>
 
-<!-- MISSION VIEW -->
-<div class="page" id="mission-view">
-  <div class="back-btn" onclick="showDashboard()">← BACK</div>
-  <div style="margin-bottom:32px">
-    <div id="mv-icon" style="font-size:32px;margin-bottom:8px"></div>
-    <div class="ls gold" style="font-size:13px;letter-spacing:6px;margin-bottom:4px">MISSION</div>
-    <div id="mv-title" class="white" style="font-size:28px;letter-spacing:4px;margin:4px 0 8px"></div>
-    <div id="mv-subtitle" class="dim" style="font-size:12px;letter-spacing:2px;margin-bottom:16px"></div>
-    <div id="mv-desc" style="font-size:13px;color:#666;line-height:1.7;max-width:500px;margin-bottom:20px"></div>
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px">
-      <div class="bar-track thin" style="flex:1"><div class="bar-fill" id="mv-bar" style="width:0%"></div></div>
-      <span id="mv-count" class="gold" style="font-size:11px;letter-spacing:1px"></span>
-    </div>
-    <div id="mv-xp" class="dim" style="font-size:11px"></div>
+<!-- WEEK -->
+<div class="page" id="week">
+  <div class="header">
+    <div class="ls gold">WEEK BRIEFING</div>
+    <div id="week-title" class="white" style="font-size:26px;letter-spacing:3px;margin-top:8px"></div>
   </div>
-  <div id="task-list"></div>
+
+  <div class="card gold-border">
+    <div class="label" style="margin-top:0">THEME</div>
+    <div id="week-theme" class="small"></div>
+    <div class="label">SKILLS</div>
+    <div id="week-skills"></div>
+    <div class="label">BOOK / AUDIO</div>
+    <div id="week-book" class="small"></div>
+    <div class="label">SUNDAY DEEP DIVE</div>
+    <div id="week-deep" class="small"></div>
+  </div>
+
+  <div class="ls dim" style="margin:18px 0 12px">LOCKED DAILY MISSIONS</div>
+  <div id="days-list"></div>
+</div>
+
+<!-- DAY -->
+<div class="page" id="day">
+  <div class="back" onclick="showPage('week')">← BACK</div>
+  <div class="header" style="text-align:left;margin-bottom:18px">
+    <div id="day-kicker" class="ls gold"></div>
+    <div id="day-title" class="white" style="font-size:28px;letter-spacing:2px;margin:8px 0"></div>
+    <div id="day-desc" class="small dim"></div>
+  </div>
+
+  <div class="card gold-border">
+    <div class="label" style="margin-top:0">TODAY'S INSTRUCTION</div>
+    <div id="day-instruction" class="small"></div>
+  </div>
+
+  <div class="ls dim" style="margin:18px 0 12px">CHECKLIST</div>
+  <div id="day-tasks"></div>
+
+  <div class="card mt">
+    <div class="label" style="margin-top:0">STORY</div>
+    <textarea class="input" id="story" placeholder="What happened? What is the historical story?"></textarea>
+    <div class="label">LESSON</div>
+    <textarea class="input short" id="lesson" placeholder="What does it teach?"></textarea>
+    <div class="label">HUMAN BEHAVIOR</div>
+    <textarea class="input short" id="behavior" placeholder="What does it reveal about people, fear, power, ego, greed, status?"></textarea>
+    <div class="label">WHERE I CAN USE IT</div>
+    <textarea class="input short" id="usecase" placeholder="Business, negotiation, Satr, family, college, etc."></textarea>
+    <div class="label">ONE-LINER</div>
+    <textarea class="input short" id="oneliner" placeholder="One sharp sentence you can say out loud."></textarea>
+  </div>
+
+  <div id="review-box" class="card mt" style="display:none">
+    <div class="label" style="margin-top:0">SUNDAY REVIEW</div>
+    <textarea class="input short" id="rating" placeholder="Skill rating /10"></textarea>
+    <div class="label">BEST STORY</div>
+    <textarea class="input short" id="beststory" placeholder="Best story from the week"></textarea>
+    <div class="label">BIGGEST MISTAKE</div>
+    <textarea class="input short" id="mistake" placeholder="Where did you fail or overreact?"></textarea>
+    <div class="label">NEXT WEEK ADJUSTMENT</div>
+    <textarea class="input short" id="adjustment" placeholder="What should change next week?"></textarea>
+  </div>
+
+  <div id="complete-warning" class="warning" style="display:none"></div>
+  <button class="btn primary mt" onclick="completeCurrentDay()">COMPLETE DAY + UNLOCK NEXT</button>
+  <button class="btn" onclick="saveDay(false)">SAVE WITHOUT COMPLETING</button>
+</div>
+
+<!-- STORIES -->
+<div class="page" id="stories">
+  <div class="header">
+    <div class="ls gold">STORIES FILE</div>
+    <div class="small dim" style="margin-top:8px">Only completed days with saved story output appear here.</div>
+  </div>
+  <div id="stories-list"></div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="settings">
+  <div class="header">
+    <div class="ls gold">SETTINGS</div>
+    <div class="small dim" style="margin-top:8px">Use only when needed. Do not keep resetting to feel productive.</div>
+  </div>
+  <div class="card">
+    <div class="ls gold" style="margin-bottom:8px">PROGRESS</div>
+    <div class="small dim" id="settings-summary"></div>
+  </div>
+  <button class="btn danger" onclick="resetAll()">RESET ALL PROGRESS</button>
+</div>
+
+<div class="nav" id="nav">
+  <button id="nav-home" onclick="showPage('home')">Home</button>
+  <button id="nav-week" onclick="showPage('week')">Week</button>
+  <button id="nav-stories" onclick="showPage('stories')">Stories</button>
+  <button id="nav-settings" onclick="showPage('settings')">Settings</button>
 </div>
 
 <script>
-var MISSIONS = [
+/*
+  REDDINGTON EXECUTION ENGINE
+  To add future weeks, append objects to WEEKS.
+  ChatGPT gives the weekly plan. App shows the clean execution version.
+*/
+var WEEKS = [
   {
-    id:"composure",title:"COMPOSURE",subtitle:"Control the Storm Within",icon:"🧊",
-    description:"Reddington never flinches. Train your nervous system to stay calm under any pressure.",
-    tasks:[
-      {id:"c1",text:"Set a consistent wake-up time and stick to it for 7 days",xp:50},
-      {id:"c2",text:"Take a cold shower (30+ seconds cold at the end)",xp:30},
-      {id:"c3",text:"Sit in complete silence for 10 minutes — no phone, no music",xp:40},
-      {id:"c4",text:"Cold shower streak: 7 days in a row",xp:80},
-      {id:"c5",text:"Silence streak: 7 days of 10-minute sessions",xp:80},
-      {id:"c6",text:"Stay calm in a stressful moment — consciously slow your breathing",xp:60},
-      {id:"c7",text:"Go an entire day without complaining about anything",xp:50},
-      {id:"c8",text:"Cold shower streak: 21 days",xp:120},
-      {id:"c9",text:"Silence streak: 21 days",xp:120},
-      {id:"c10",text:"Handle a conflict or disagreement without raising your voice",xp:100}
-    ]
-  },
-  {
-    id:"speech",title:"SPEECH",subtitle:"Words Are Weapons",icon:"🎙️",
-    description:"Red speaks like every word costs money. Slow, deliberate, no filler. Make people lean in.",
-    tasks:[
-      {id:"s1",text:"Record yourself speaking for 2 minutes and listen back",xp:30},
-      {id:"s2",text:"Identify your top 3 filler words (like, um, basically, so)",xp:20},
-      {id:"s3",text:"Have a 5-minute conversation with zero filler words",xp:50},
-      {id:"s4",text:"Practice a 3-second pause before answering a question — 5 times",xp:40},
-      {id:"s5",text:"Record + review sessions: 7 days",xp:80},
-      {id:"s6",text:"Deliver a strong opinion in a conversation without backtracking",xp:60},
-      {id:"s7",text:"Tell a short story to someone and make them fully engaged",xp:70},
-      {id:"s8",text:"Have a 10-minute conversation at half your normal speaking speed",xp:60},
-      {id:"s9",text:"Use silence to make a point — pause after saying something important",xp:50},
-      {id:"s10",text:"Someone comments that you speak well or confidently",xp:150}
-    ]
-  },
-  {
-    id:"knowledge",title:"KNOWLEDGE",subtitle:"Know Everything About Everything",icon:"📚",
-    description:"Reddington quotes poets, knows history, understands people. Build range that makes you unpredictable.",
-    tasks:[
-      {id:"k1",text:"Start reading The Laws of Human Nature (Robert Greene)",xp:30},
-      {id:"k2",text:"Read for 20 minutes — 7 day streak",xp:80},
-      {id:"k3",text:"Watch a documentary about a topic you know nothing about",xp:30},
-      {id:"k4",text:"Pick your 3 depth topics beyond tech/business",xp:40},
-      {id:"k5",text:"Learn 5 interesting facts about one of your depth topics",xp:30},
-      {id:"k6",text:"Finish your first book from the roadmap",xp:100},
-      {id:"k7",text:"Bring up a non-obvious topic in conversation and hold it for 2+ minutes",xp:70},
-      {id:"k8",text:"Read for 20 minutes — 21 day streak",xp:120},
-      {id:"k9",text:"Finish your second book",xp:100},
-      {id:"k10",text:"Someone says 'how do you know that?' in a conversation",xp:150}
-    ]
-  },
-  {
-    id:"social",title:"SOCIAL INTEL",subtitle:"Read the Room Before You Enter It",icon:"👁️",
-    description:"Red knows what people want before they say it. Develop the ability to read anyone.",
-    tasks:[
-      {id:"so1",text:"People-watch for 15 minutes — note who leads, who follows",xp:30},
-      {id:"so2",text:"In a conversation, listen 80% and talk 20%",xp:40},
-      {id:"so3",text:"Ask a follow-up question instead of sharing your own story",xp:30},
-      {id:"so4",text:"Hold comfortable eye contact for a full sentence without looking away",xp:40},
-      {id:"so5",text:"Correctly guess someone's mood before they tell you",xp:50},
-      {id:"so6",text:"Notice a lie or exaggeration in real-time (don't call it out, just note it)",xp:60},
-      {id:"so7",text:"Make someone feel genuinely heard — they open up to you",xp:70},
-      {id:"so8",text:"Observe 5 social situations and journal what you noticed",xp:80},
-      {id:"so9",text:"Predict how a social interaction will play out — and be right",xp:80},
-      {id:"so10",text:"Someone tells you 'you really get people'",xp:150}
-    ]
-  },
-  {
-    id:"presence",title:"PRESENCE",subtitle:"Own the Room Without Speaking",icon:"🖤",
-    description:"Style, posture, movement. Reddington commands attention just by walking in.",
-    tasks:[
-      {id:"p1",text:"Audit your wardrobe — identify 3 outfits that look intentional",xp:30},
-      {id:"p2",text:"Practice posture: shoulders back, chin level, for one full day",xp:40},
-      {id:"p3",text:"Walk deliberately for a full day — no rushing, no shuffling",xp:40},
-      {id:"p4",text:"Sit without fidgeting for a 30-minute meeting or class",xp:50},
-      {id:"p5",text:"Buy or organize one well-fitting outfit in neutral colors",xp:50},
-      {id:"p6",text:"Develop one personal signature (greeting, phrase, accessory, ritual)",xp:60},
-      {id:"p7",text:"Enter a room and consciously choose where to sit and how to carry yourself",xp:40},
-      {id:"p8",text:"Get a compliment on your appearance or style",xp:70},
-      {id:"p9",text:"Maintain deliberate posture + movement for 7 consecutive days",xp:100},
-      {id:"p10",text:"Someone tells you that you have presence or carry yourself well",xp:150}
-    ]
-  },
-  {
-    id:"body",title:"THE TEMPLE",subtitle:"Build the Machine That Carries You",icon:"⚔️",
-    description:"Reddington is always clean, sharp, and carries himself like his body matters. Hygiene, fitness, grooming — the foundation under everything.",
-    tasks:[
-      {id:"b1",text:"Lock in a daily skincare routine — cleanser + moisturizer + sunscreen",xp:40},
-      {id:"b2",text:"Skincare routine streak: 7 days without missing",xp:80},
-      {id:"b3",text:"Start a gym routine — go 3 times in one week",xp:60},
-      {id:"b4",text:"Hit the gym 3x/week for 3 consecutive weeks",xp:120},
-      {id:"b5",text:"Nail your hygiene stack: shower, deodorant, cologne, trimmed nails — daily",xp:40},
-      {id:"b6",text:"Find a cologne/scent that becomes YOUR signature",xp:50},
-      {id:"b7",text:"Get a sharp haircut that fits your face shape",xp:40},
-      {id:"b8",text:"Track your water intake — hit 2+ liters for 7 days",xp:60},
-      {id:"b9",text:"Fix your sleep — 7+ hours for 7 consecutive nights",xp:80},
-      {id:"b10",text:"Someone compliments how you look or smell",xp:100},
-      {id:"b11",text:"Gym streak: 4 weeks of 3x/week consistently",xp:150},
-      {id:"b12",text:"Notice a visible physical change — posture, arms, face, energy",xp:150}
-    ]
-  },
-  {
-    id:"experience",title:"EXPERIENCE",subtitle:"A Man Who Has Lived",icon:"🌍",
-    description:"Red's stories come from a life fully lived. Break your routine. Try things that scare you.",
-    tasks:[
-      {id:"e1",text:"Try a cuisine you've never eaten before",xp:30},
-      {id:"e2",text:"Visit a place in your city you've never been to",xp:30},
-      {id:"e3",text:"Watch a highly rated film from a country you know nothing about",xp:30},
-      {id:"e4",text:"Cook a complete meal from scratch — something challenging",xp:50},
-      {id:"e5",text:"Start a conversation with a stranger",xp:60},
-      {id:"e6",text:"Do something that genuinely scares or challenges you",xp:80},
-      {id:"e7",text:"Visit a museum, gallery, or cultural site",xp:50},
-      {id:"e8",text:"Attend an event alone and enjoy it",xp:70},
-      {id:"e9",text:"Complete 5 new experiences in a single week",xp:100},
-      {id:"e10",text:"Tell a story from a real experience that captivates someone",xp:150}
+    week: 1,
+    title: "WEEK 1 — HISTORY",
+    domain: "History",
+    skillFocus: "Pausing Before Answering",
+    secondarySkills: ["Speaking slowly", "Using fewer words", "Stop overexplaining"],
+    book: "Never Split the Difference — Chris Voss",
+    theme: "How power is built, kept, and lost. Focus: fear, speed, intelligence, empire, reputation.",
+    deepDive: "The Mongols — speed, fear, intelligence networks, reputation before battle.",
+    days: [
+      {
+        topic: "The Mongols",
+        source: "Search/listen: Mongol Empire rise, Genghis Khan strategy, Kings and Generals / The Rest Is History.",
+        instruction: "Use a 1-second pause before answering in 3 conversations. Learn one Mongol story and turn it into a moral.",
+        tasks: ["Pause 1 second before answering in 3 conversations", "Speak 20% slower in one conversation", "Listen/watch 30 minutes about the Mongols", "Retell the story out loud once"]
+      },
+      {
+        topic: "Roman Empire",
+        source: "Search/listen: Roman roads, legion discipline, law, bureaucracy, why Rome lasted.",
+        instruction: "Notice systems. Rome was not only soldiers — it was roads, law, discipline, incentives, and administration.",
+        tasks: ["Pause before answering in 3 conversations", "Use fewer words in one serious reply", "Listen/watch 30 minutes about Rome", "Save one story about systems or discipline"]
+      },
+      {
+        topic: "Ottoman Empire",
+        source: "Search/listen: Ottoman diplomacy, Janissaries, Istanbul, balance of power, long survival.",
+        instruction: "Look for patience and adaptation. How does a power survive for centuries without always being the strongest?",
+        tasks: ["Pause before answering in 3 conversations", "Do not overexplain one decision", "Listen/watch 30 minutes about the Ottomans", "Save one story about survival or adaptation"]
+      },
+      {
+        topic: "British Empire in India",
+        source: "Search/listen: East India Company, divide and rule, trade becoming power, bureaucracy.",
+        instruction: "Look for soft control. Trade, information, law, and local alliances can become more powerful than open force.",
+        tasks: ["Pause before answering in 3 conversations", "Ask one follow-up question instead of talking about yourself", "Listen/watch 30 minutes about British India", "Save one story about control or incentives"]
+      },
+      {
+        topic: "Napoleon",
+        source: "Search/listen: Napoleon rise and fall, Austerlitz, Russia campaign, ego and overreach.",
+        instruction: "Look for genius and overreach. The same trait that builds power can destroy it when control is lost.",
+        tasks: ["Pause before answering in 3 conversations", "Speak slower while explaining something", "Listen/watch 30 minutes about Napoleon", "Save one story about ego or overreach"]
+      },
+      {
+        topic: "Cold War Espionage",
+        source: "Search/listen: spies, double agents, KGB/CIA, Berlin, intelligence failures, defections.",
+        instruction: "Look for secrets, leverage, and trust. People move because of fear, ideology, money, ego, or revenge.",
+        tasks: ["Pause before answering in 3 conversations", "Reveal less than you normally would", "Listen/watch 30 minutes about Cold War espionage", "Save one story about leverage or betrayal"]
+      },
+      {
+        topic: "Review & Retell",
+        source: "No new topic. Review your best stories from the week.",
+        instruction: "Retell your best 3 stories out loud. Rate the skill. Be honest. If you overplanned, write it down.",
+        tasks: ["Retell best 3 history stories out loud", "Rate pausing before answering /10", "Write biggest mistake this week", "Write next week adjustment"]
+      }
     ]
   }
 ];
@@ -240,200 +261,274 @@ var LEVELS = [
   {name:"REDDINGTON",min:4800}
 ];
 
-var KEY = "reddington-v5";
-var completed = {};
-var currentMission = -1;
+var KEY = "reddington-execution-v1";
+var state = {
+  completedDays: {},
+  checks: {},
+  entries: {},
+  streak: 0,
+  lastCompleteDate: null,
+  createdAt: null
+};
+var activeWeek = 0;
+var activeDay = 0;
 
-function load() {
-  try {
-    var raw = localStorage.getItem(KEY);
-    if (raw) {
-      var p = JSON.parse(raw);
-      if (p && typeof p === "object") completed = p;
+function todayKey(){
+  var d=new Date();
+  var m=String(d.getMonth()+1).padStart(2,'0');
+  var day=String(d.getDate()).padStart(2,'0');
+  return d.getFullYear()+"-"+m+"-"+day;
+}
+function parseDate(s){ if(!s) return null; var p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+function daysBetween(a,b){ var da=parseDate(a), db=parseDate(b); if(!da||!db) return 0; return Math.round((db-da)/(1000*60*60*24)); }
+function idFor(w,d){ return "w"+(w+1)+"d"+(d+1); }
+
+function load(){
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(raw){
+      var p=JSON.parse(raw);
+      if(p&&typeof p==="object") state=Object.assign(state,p);
     }
-  } catch(e) {}
+    if(!state.createdAt){state.createdAt=todayKey(); saveSilent();}
+  }catch(e){}
+}
+function saveSilent(){ try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} }
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(state)); showToast(true);}catch(e){showToast(false);}
+}
+function showToast(ok){
+  var el=document.getElementById("toast");
+  el.textContent=ok?"SAVED ✓":"SAVE FAILED ✗";
+  el.className="toast show "+(ok?"good":"fail");
+  setTimeout(function(){el.className="toast";},1200);
 }
 
-function save() {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(completed));
-    showToast(true);
-  } catch(e) {
-    showToast(false);
+function earnedXP(){
+  var xp=0;
+  for(var k in state.completedDays){ if(state.completedDays[k]) xp+=100; }
+  return xp;
+}
+function decayPenalty(){
+  if(!state.lastCompleteDate) return 0;
+  var missed=daysBetween(state.lastCompleteDate,todayKey());
+  if(missed<=3) return 0;
+  return (missed-3)*25;
+}
+function totalXP(){ return Math.max(0, earnedXP()-decayPenalty()); }
+function getLevel(xp){
+  var lvl=LEVELS[0];
+  for(var i=LEVELS.length-1;i>=0;i--){ if(xp>=LEVELS[i].min){lvl=LEVELS[i];break;} }
+  var idx=LEVELS.indexOf(lvl);
+  var next=LEVELS[idx+1]||null;
+  var progress=next?(xp-lvl.min)/(next.min-lvl.min):1;
+  return {name:lvl.name,index:idx,next:next,progress:Math.max(0,Math.min(1,progress))};
+}
+function updateStreakOnComplete(){
+  var today=todayKey();
+  if(state.lastCompleteDate===today) return;
+  if(!state.lastCompleteDate){ state.streak=1; }
+  else{
+    var diff=daysBetween(state.lastCompleteDate,today);
+    if(diff===1) state.streak=(state.streak||0)+1;
+    else if(diff>1) state.streak=1;
+  }
+  state.lastCompleteDate=today;
+}
+function unlockedDayIndex(){
+  var w=WEEKS[0];
+  var unlocked=0;
+  for(var i=0;i<w.days.length;i++){
+    if(i===0){unlocked=0;}
+    if(state.completedDays[idFor(0,i)]) unlocked=i+1;
+    else break;
+  }
+  return Math.min(unlocked,w.days.length-1);
+}
+function currentDayIndex(){ return unlockedDayIndex(); }
+function isDayUnlocked(w,d){ if(w>0) return false; return d<=unlockedDayIndex(); }
+
+function showPage(id){
+  var pages=document.querySelectorAll('.page');
+  for(var i=0;i<pages.length;i++) pages[i].className='page';
+  document.getElementById(id).className='page active';
+  var navs=['home','week','stories','settings'];
+  for(var j=0;j<navs.length;j++){
+    var b=document.getElementById('nav-'+navs[j]);
+    if(b) b.className=(navs[j]===id?'active':'');
+  }
+  if(id==='home') renderHome();
+  if(id==='week') renderWeek();
+  if(id==='stories') renderStories();
+  if(id==='settings') renderSettings();
+  window.scrollTo(0,0);
+}
+function openToday(){ openDay(0,currentDayIndex()); }
+function openDay(w,d){
+  if(!isDayUnlocked(w,d)){ showToast(false); return; }
+  activeWeek=w; activeDay=d;
+  renderDay();
+  showPage('day');
+}
+
+function renderHome(){
+  var xp=totalXP(); var level=getLevel(xp); var w=WEEKS[0];
+  document.getElementById('rank-name').textContent=level.name;
+  document.getElementById('total-xp').textContent=xp;
+  document.getElementById('rank-bar').style.width=(level.progress*100).toFixed(1)+'%';
+  document.getElementById('rank-next').textContent=level.next?('NEXT: '+level.next.name+' — '+(level.next.min-xp)+' XP TO GO'):'MAX RANK ACHIEVED';
+  document.getElementById('streak-num').textContent=state.streak||0;
+  document.getElementById('unlocked-num').textContent=(unlockedDayIndex()+1)+'/7';
+  document.getElementById('home-week-title').textContent=w.title;
+  document.getElementById('home-week-sub').textContent=w.theme;
+  document.getElementById('home-domain').textContent='DOMAIN: '+w.domain;
+  document.getElementById('home-skill').textContent='SKILL: '+w.skillFocus;
+  document.getElementById('home-book').textContent='BOOK: '+w.book;
+}
+function renderWeek(){
+  var w=WEEKS[0];
+  document.getElementById('week-title').textContent=w.title;
+  document.getElementById('week-theme').textContent=w.theme;
+  document.getElementById('week-book').textContent=w.book+' — listen 30 minutes when possible. Do not obsess over chapters.';
+  document.getElementById('week-deep').textContent=w.deepDive;
+  var skills='<span class="pill gold-pill">MAIN: '+w.skillFocus+'</span>';
+  for(var i=0;i<w.secondarySkills.length;i++) skills+='<span class="pill">'+w.secondarySkills[i]+'</span>';
+  document.getElementById('week-skills').innerHTML=skills;
+  var list=document.getElementById('days-list'); list.innerHTML='';
+  for(var d=0;d<w.days.length;d++){
+    (function(dayIndex){
+      var day=w.days[dayIndex]; var did=idFor(0,dayIndex); var done=!!state.completedDays[did]; var locked=!isDayUnlocked(0,dayIndex);
+      var el=document.createElement('div');
+      el.className='day-card '+(done?'done ':'')+(locked?'locked':'');
+      el.onclick=function(){ if(!locked) openDay(0,dayIndex); };
+      el.innerHTML='<div class="day-num">'+(done?'✓':(locked?'🔒':dayIndex+1))+'</div>'+
+        '<div class="day-body"><div class="ls '+(done?'gold':'white')+'" style="letter-spacing:2px">DAY '+(dayIndex+1)+'</div>'+
+        '<div style="font-size:15px;margin-top:3px">'+day.topic+'</div>'+
+        '<div class="tiny dim" style="margin-top:5px">'+(locked?'Locked until previous day is complete':day.instruction)+'</div></div>';
+      list.appendChild(el);
+    })(d);
   }
 }
+function renderDay(){
+  var w=WEEKS[activeWeek]; var day=w.days[activeDay]; var did=idFor(activeWeek,activeDay);
+  document.getElementById('day-kicker').textContent='WEEK '+w.week+' / DAY '+(activeDay+1)+' / '+w.domain;
+  document.getElementById('day-title').textContent=day.topic;
+  document.getElementById('day-desc').textContent=day.source;
+  document.getElementById('day-instruction').textContent=day.instruction;
 
-function showToast(ok) {
-  var el = document.getElementById("toast");
-  el.textContent = ok ? "SAVED ✓" : "SAVE FAILED ✗";
-  el.className = "toast show " + (ok ? "ok" : "fail");
-  setTimeout(function() { el.className = "toast"; }, 1500);
-}
-
-function getLevel(xp) {
-  var lvl = LEVELS[0];
-  for (var i = LEVELS.length - 1; i >= 0; i--) {
-    if (xp >= LEVELS[i].min) { lvl = LEVELS[i]; break; }
-  }
-  var idx = LEVELS.indexOf(lvl);
-  var next = LEVELS[idx + 1] || null;
-  var progress = next ? (xp - lvl.min) / (next.min - lvl.min) : 1;
-  return { name: lvl.name, index: idx, next: next, progress: progress };
-}
-
-function getTotalXP() {
-  var sum = 0;
-  for (var i = 0; i < MISSIONS.length; i++) {
-    for (var j = 0; j < MISSIONS[i].tasks.length; j++) {
-      if (completed[MISSIONS[i].tasks[j].id]) sum += MISSIONS[i].tasks[j].xp;
-    }
-  }
-  return sum;
-}
-
-function getMaxXP() {
-  var sum = 0;
-  for (var i = 0; i < MISSIONS.length; i++) {
-    for (var j = 0; j < MISSIONS[i].tasks.length; j++) {
-      sum += MISSIONS[i].tasks[j].xp;
-    }
-  }
-  return sum;
-}
-
-function renderDashboard() {
-  var totalXP = getTotalXP();
-  var maxXP = getMaxXP();
-  var level = getLevel(totalXP);
-
-  document.getElementById("rank-name").textContent = level.name;
-  document.getElementById("total-xp").textContent = totalXP;
-  document.getElementById("max-xp").textContent = maxXP;
-  document.getElementById("rank-bar").style.width = (level.progress * 100).toFixed(1) + "%";
-
-  var nextEl = document.getElementById("rank-next");
-  if (level.next) {
-    nextEl.textContent = "NEXT: " + level.next.name + " — " + (level.next.min - totalXP) + " XP TO GO";
-  } else {
-    nextEl.textContent = "MAX RANK ACHIEVED";
-    nextEl.style.color = "#c5a455";
-  }
-
-  var list = document.getElementById("mission-list");
-  list.innerHTML = "";
-
-  for (var i = 0; i < MISSIONS.length; i++) {
-    (function(idx) {
-      var m = MISSIONS[idx];
-      var mXP = 0, mMax = 0, done = 0;
-      for (var j = 0; j < m.tasks.length; j++) {
-        mMax += m.tasks[j].xp;
-        if (completed[m.tasks[j].id]) { mXP += m.tasks[j].xp; done++; }
-      }
-      var allDone = done === m.tasks.length;
-      var pct = mMax > 0 ? ((mXP / mMax) * 100).toFixed(1) : "0";
-
-      var card = document.createElement("div");
-      card.className = "mission-card" + (allDone ? " done" : "");
-      card.onclick = function() { openMission(idx); };
-      card.innerHTML =
-        '<div style="font-size:28px;flex-shrink:0">' + m.icon + '</div>' +
-        '<div style="flex:1;min-width:0">' +
-          '<div style="font-size:13px;letter-spacing:3px;font-weight:700;margin-bottom:2px;color:' + (allDone ? '#c5a455' : '#ccc') + '">' + m.title + '</div>' +
-          '<div style="font-size:11px;color:#555;letter-spacing:1px;margin-bottom:8px">' + m.subtitle + '</div>' +
-          '<div class="bar-track thinner"><div class="bar-fill" style="width:' + pct + '%;' + (allDone ? 'background:#c5a455' : '') + '"></div></div>' +
-        '</div>' +
-        '<div style="text-align:right;flex-shrink:0">' +
-          '<div style="font-size:13px;color:#c5a455;font-weight:700">' + done + '/' + m.tasks.length + '</div>' +
-          '<div style="font-size:10px;color:#444;margin-top:2px">' + mXP + ' XP</div>' +
-        '</div>';
-      list.appendChild(card);
+  var checks=state.checks[did]||{};
+  var list=document.getElementById('day-tasks'); list.innerHTML='';
+  for(var i=0;i<day.tasks.length;i++){
+    (function(idx){
+      var isDone=!!checks[idx];
+      var el=document.createElement('div');
+      el.className='task '+(isDone?'done':'');
+      el.onclick=function(){
+        if(!state.checks[did]) state.checks[did]={};
+        state.checks[did][idx]=!state.checks[did][idx];
+        save(); renderDay();
+      };
+      el.innerHTML='<div class="checkbox">'+(isDone?'<span style="color:#c5a455;font-size:14px">✓</span>':'')+'</div><div class="task-text">'+day.tasks[idx]+'</div>';
+      list.appendChild(el);
     })(i);
   }
-}
-
-function openMission(idx) {
-  currentMission = idx;
-  var m = MISSIONS[idx];
-
-  document.getElementById("mv-icon").textContent = m.icon;
-  document.getElementById("mv-title").textContent = m.title;
-  document.getElementById("mv-subtitle").textContent = m.subtitle;
-  document.getElementById("mv-desc").textContent = m.description;
-
-  renderTasks();
-
-  document.getElementById("dashboard").className = "page";
-  document.getElementById("mission-view").className = "page active";
-  window.scrollTo(0, 0);
-}
-
-function renderTasks() {
-  var m = MISSIONS[currentMission];
-  var mXP = 0, mMax = 0, done = 0;
-  for (var j = 0; j < m.tasks.length; j++) {
-    mMax += m.tasks[j].xp;
-    if (completed[m.tasks[j].id]) { mXP += m.tasks[j].xp; done++; }
+  var entry=state.entries[did]||{};
+  document.getElementById('story').value=entry.story||'';
+  document.getElementById('lesson').value=entry.lesson||'';
+  document.getElementById('behavior').value=entry.behavior||'';
+  document.getElementById('usecase').value=entry.usecase||'';
+  document.getElementById('oneliner').value=entry.oneliner||'';
+  var reviewBox=document.getElementById('review-box');
+  if(activeDay===6){
+    reviewBox.style.display='block';
+    document.getElementById('rating').value=entry.rating||'';
+    document.getElementById('beststory').value=entry.beststory||'';
+    document.getElementById('mistake').value=entry.mistake||'';
+    document.getElementById('adjustment').value=entry.adjustment||'';
+  }else{
+    reviewBox.style.display='none';
   }
-  var pct = mMax > 0 ? ((mXP / mMax) * 100).toFixed(1) : "0";
-
-  document.getElementById("mv-bar").style.width = pct + "%";
-  document.getElementById("mv-count").textContent = done + "/" + m.tasks.length;
-  document.getElementById("mv-xp").textContent = mXP + " / " + mMax + " XP";
-
-  var list = document.getElementById("task-list");
-  list.innerHTML = "";
-
-  for (var j = 0; j < m.tasks.length; j++) {
-    (function(task) {
-      var isDone = !!completed[task.id];
-      var el = document.createElement("div");
-      el.className = "task" + (isDone ? " done" : "");
-      el.onclick = function() {
-        if (completed[task.id]) {
-          delete completed[task.id];
-        } else {
-          completed[task.id] = true;
-        }
-        save();
-        renderTasks();
-      };
-      el.innerHTML =
-        '<div class="checkbox">' + (isDone ? '<span style="color:#c5a455;font-size:14px">✓</span>' : '') + '</div>' +
-        '<div class="task-text">' + task.text + '</div>' +
-        '<div class="task-xp">+' + task.xp + '</div>';
-      list.appendChild(el);
-    })(m.tasks[j]);
+  document.getElementById('complete-warning').style.display='none';
+}
+function saveDay(show){
+  var did=idFor(activeWeek,activeDay);
+  var entry={
+    story:document.getElementById('story').value.trim(),
+    lesson:document.getElementById('lesson').value.trim(),
+    behavior:document.getElementById('behavior').value.trim(),
+    usecase:document.getElementById('usecase').value.trim(),
+    oneliner:document.getElementById('oneliner').value.trim()
+  };
+  if(activeDay===6){
+    entry.rating=document.getElementById('rating').value.trim();
+    entry.beststory=document.getElementById('beststory').value.trim();
+    entry.mistake=document.getElementById('mistake').value.trim();
+    entry.adjustment=document.getElementById('adjustment').value.trim();
   }
+  state.entries[did]=entry;
+  if(show!==false) save(); else save();
 }
-
-function showDashboard() {
-  currentMission = -1;
-  renderDashboard();
-  document.getElementById("mission-view").className = "page";
-  document.getElementById("dashboard").className = "page active";
-  window.scrollTo(0, 0);
+function allChecksDone(did){
+  var day=WEEKS[activeWeek].days[activeDay]; var checks=state.checks[did]||{};
+  for(var i=0;i<day.tasks.length;i++){ if(!checks[i]) return false; }
+  return true;
 }
-
-function resetAll() {
-  if (confirm("Reset all progress? This cannot be undone.")) {
-    completed = {};
-    try { localStorage.removeItem(KEY); } catch(e) {}
-    if (currentMission >= 0) {
-      renderTasks();
-    } else {
-      renderDashboard();
+function completeCurrentDay(){
+  var did=idFor(activeWeek,activeDay);
+  saveDay(false);
+  var entry=state.entries[did]||{};
+  var problems=[];
+  if(!allChecksDone(did)) problems.push('Finish the checklist first.');
+  if(!entry.oneliner) problems.push('Write the one-liner.');
+  if(activeDay===6 && (!entry.rating || !entry.mistake || !entry.adjustment)) problems.push('Finish the Sunday review fields.');
+  if(problems.length){
+    var w=document.getElementById('complete-warning');
+    w.innerHTML=problems.join('<br>');
+    w.style.display='block';
+    return;
+  }
+  state.completedDays[did]=true;
+  updateStreakOnComplete();
+  save();
+  if(activeDay<6){ openDay(0,activeDay+1); }
+  else { showPage('home'); }
+}
+function renderStories(){
+  var list=document.getElementById('stories-list'); list.innerHTML='';
+  var found=0;
+  for(var w=0;w<WEEKS.length;w++){
+    for(var d=0;d<WEEKS[w].days.length;d++){
+      var did=idFor(w,d); var entry=state.entries[did];
+      if(state.completedDays[did] && entry && (entry.story||entry.oneliner||entry.lesson)){
+        found++;
+        var el=document.createElement('div'); el.className='card';
+        el.innerHTML='<div class="ls gold">WEEK '+(w+1)+' / DAY '+(d+1)+'</div>'+
+          '<div class="white" style="font-size:20px;margin:8px 0">'+WEEKS[w].days[d].topic+'</div>'+
+          '<div class="label" style="margin-top:0">ONE-LINER</div><div class="small">'+escapeHtml(entry.oneliner||'—')+'</div>'+
+          '<div class="label">LESSON</div><div class="small dim">'+escapeHtml(entry.lesson||'—')+'</div>'+
+          '<div class="label">STORY</div><div class="small dim">'+escapeHtml(entry.story||'—')+'</div>';
+        list.appendChild(el);
+      }
     }
   }
+  if(!found) list.innerHTML='<div class="empty">No completed stories yet. Finish Day 1.</div>';
+}
+function renderSettings(){
+  document.getElementById('settings-summary').innerHTML='Earned XP: '+earnedXP()+'<br>Decay penalty: '+decayPenalty()+'<br>Effective XP: '+totalXP()+'<br>Streak: '+(state.streak||0)+'<br>Last completed: '+(state.lastCompleteDate||'never');
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function resetAll(){
+  if(confirm('Reset all progress? This cannot be undone.')){
+    state={completedDays:{},checks:{},entries:{},streak:0,lastCompleteDate:null,createdAt:todayKey()};
+    save(); showPage('home');
+  }
 }
 
-// INIT
 load();
-setTimeout(function() {
-  document.getElementById("splash").className = "splash hidden";
-  document.getElementById("dashboard").className = "page active";
-  renderDashboard();
-}, 2200);
+setTimeout(function(){
+  document.getElementById('splash').className='splash hidden';
+  showPage('home');
+},900);
 </script>
 </body>
 </html>
